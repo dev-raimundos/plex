@@ -39,7 +39,7 @@ Usuário
                                 │ envia magnet/torrent
                                 ▼
                   ┌─────────────────────────┐
-                  │       qBittorrent       │  ← client torrent (:8080)
+                  │       qBittorrent       │  ← client torrent (:8090)
                   └─────────────┬───────────┘
                                 │ arquivo baixado em /downloads
                                 │ Radarr/Sonarr move para /movies ou /tv
@@ -153,7 +153,7 @@ Adicione os indexers (trackers de torrent) que deseja usar. Depois vá em *Setti
 
 **Radarr** → `http://SEU-HOST:7878`
 - *Settings → Indexers* → adicione Prowlarr como indexer
-- *Settings → Download Clients* → adicione qBittorrent (host: `qbittorrent`, porta: `8080`)
+- *Settings → Download Clients* → adicione qBittorrent (host: `qbittorrent`, porta: `8090`)
 - *Settings → Media Management* → Root Folder: `/movies`
 
 **Sonarr** → `http://SEU-HOST:8989`
@@ -171,7 +171,7 @@ Adicione os indexers (trackers de torrent) que deseja usar. Depois vá em *Setti
 
 **4. Testando o fluxo completo**
 
-No Overseerr, pesquise um filme e clique em *Request*. Acompanhe o download em `http://SEU-HOST:8080` (qBittorrent). Quando concluído, o arquivo aparece automaticamente na biblioteca do Plex.
+No Overseerr, pesquise um filme e clique em *Request*. Acompanhe o download em `http://SEU-HOST:8090` (qBittorrent). Quando concluído, o arquivo aparece automaticamente na biblioteca do Plex.
 
 ---
 
@@ -181,7 +181,7 @@ No Overseerr, pesquise um filme e clique em *Request*. Acompanhe o download em `
 - Docker Compose v2 (plugin, não o `docker-compose` legado)
 - Coolify configurado no servidor de destino
 - Conta no [plex.tv](https://www.plex.tv) para geração do claim token
-- Portas `32400`, `5055`, `7878`, `8989`, `9696`, `8080` e `6881` disponíveis no host
+- Portas `32400`, `5055`, `7878`, `8989`, `9696`, `8090` e `6881` disponíveis no host
 
 ---
 

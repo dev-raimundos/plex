@@ -114,12 +114,12 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
-      - WEBUI_PORT=8080
+      - WEBUI_PORT=8090
     volumes:
       - qbittorrent_config:/config
       - downloads:/downloads
     ports:
-      - "8080:8080"
+      - "8090:8090"
       - "6881:6881"
       - "6881:6881/udp"
     restart: unless-stopped
