@@ -1,0 +1,125 @@
+name: plex-stack
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  plex_config:
+  radarr_config:
+  sonarr_config:
+  prowlarr_config:
+  qbittorrent_config:
+  overseerr_config:
+  media_movies:
+  media_tv:
+  downloads:
+
+services:
+  # ─── Media Server ──────────────────────────────────────────────────────────
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+    volumes:
+      - plex_config:/config
+      - media_movies:/movies
+      - media_tv:/tv
+    ports:
+      - "32400:32400"
+    restart: unless-stopped
+
+  # ─── Request UI ────────────────────────────────────────────────────────────
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+    volumes:
+      - overseerr_config:/config
+    ports:
+      - "5055:5055"
+    restart: unless-stopped
+
+  # ─── Movie Automation ──────────────────────────────────────────────────────
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+    volumes:
+      - radarr_config:/config
+      - media_movies:/movies
+      - downloads:/downloads
+    ports:
+      - "7878:7878"
+    restart: unless-stopped
+
+  # ─── TV Show Automation ────────────────────────────────────────────────────
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+    volumes:
+      - sonarr_config:/config
+      - media_tv:/tv
+      - downloads:/downloads
+    ports:
+      - "8989:8989"
+    restart: unless-stopped
+
+  # ─── Indexer Aggregator ────────────────────────────────────────────────────
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+    volumes:
+      - prowlarr_config:/config
+    ports:
+      - "9696:9696"
+    restart: unless-stopped
+
+  # ─── Torrent Client ────────────────────────────────────────────────────────
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    networks:
+      - internal
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Sao_Paulo}
+      - WEBUI_PORT=8080
+    volumes:
+      - qbittorrent_config:/config
+      - downloads:/downloads
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    restart: unless-stopped
