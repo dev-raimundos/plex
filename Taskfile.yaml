@@ -1,0 +1,57 @@
+version: "3"
+
+vars:
+  COMPOSE: docker compose -f compose.yaml
+
+tasks:
+  up:
+    desc: Sobe toda a stack
+    cmds:
+      - "{{.COMPOSE}} up -d"
+
+  down:
+    desc: Para toda a stack
+    cmds:
+      - "{{.COMPOSE}} down"
+
+  restart:
+    desc: Reinicia um serviço específico (ex task restart -- plex)
+    cmds:
+      - "{{.COMPOSE}} restart {{.CLI_ARGS}}"
+
+  pull:
+    desc: Atualiza todas as imagens para a versão mais recente
+    cmds:
+      - "{{.COMPOSE}} pull"
+
+  update:
+    desc: Atualiza imagens e recria os containers
+    cmds:
+      - "{{.COMPOSE}} pull"
+      - "{{.COMPOSE}} up -d --force-recreate"
+
+  ps:
+    desc: Lista os containers e seus estados
+    cmds:
+      - "{{.COMPOSE}} ps"
+
+  logs:
+    desc: Mostra logs de um serviço (ex task logs -- radarr)
+    cmds:
+      - "{{.COMPOSE}} logs -f --tail=100 {{.CLI_ARGS}}"
+
+  logs-all:
+    desc: Mostra logs de todos os serviços
+    cmds:
+      - "{{.COMPOSE}} logs -f --tail=50"
+
+  qb-password:
+    desc: Mostra a senha gerada pelo qBittorrent no primeiro boot
+    cmds:
+      - "{{.COMPOSE}} logs qbittorrent | grep -i 'password'"
+
+  plex-claim:
+    desc: Lembra de gerar um novo PLEX_CLAIM antes de rodar
+    cmds:
+      - echo "Acesse https://www.plex.tv/claim/ e atualize PLEX_CLAIM no .env"
+      - echo "O token expira em 4 minutos — atualize e rode task restart -- plex"
