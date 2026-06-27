@@ -1,19 +1,8 @@
 name: plex-stack
 
 networks:
-  internal:
+  home-network:
     driver: bridge
-
-volumes:
-  plex_config:
-  radarr_config:
-  sonarr_config:
-  prowlarr_config:
-  qbittorrent_config:
-  overseerr_config:
-  media_movies:
-  media_tv:
-  downloads:
 
 services:
   # ─── Media Server ──────────────────────────────────────────────────────────
@@ -21,7 +10,7 @@ services:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
@@ -29,9 +18,9 @@ services:
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
-      - plex_config:/config
-      - media_movies:/movies
-      - media_tv:/tv
+      - ./config/plex:/config
+      - ./media/movies:/movies
+      - ./media/tv:/tv
     ports:
       - "32400:32400"
     restart: unless-stopped
@@ -41,13 +30,13 @@ services:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
     volumes:
-      - overseerr_config:/config
+      - ./config/overseerr:/config
     ports:
       - "5055:5055"
     restart: unless-stopped
@@ -57,15 +46,14 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
     volumes:
-      - radarr_config:/config
-      - media_movies:/movies
-      - downloads:/downloads
+      - ./config/radarr:/config
+      - ./media:/data
     ports:
       - "7878:7878"
     restart: unless-stopped
@@ -75,15 +63,14 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
     volumes:
-      - sonarr_config:/config
-      - media_tv:/tv
-      - downloads:/downloads
+      - ./config/sonarr:/config
+      - ./media:/data
     ports:
       - "8989:8989"
     restart: unless-stopped
@@ -93,13 +80,13 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
     volumes:
-      - prowlarr_config:/config
+      - ./config/prowlarr:/config
     ports:
       - "9696:9696"
     restart: unless-stopped
@@ -109,15 +96,15 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     networks:
-      - internal
+      - home-network
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Sao_Paulo}
       - WEBUI_PORT=8090
     volumes:
-      - qbittorrent_config:/config
-      - downloads:/downloads
+      - ./config/qbittorrent:/config
+      - ./media:/data
     ports:
       - "8090:8090"
       - "6881:6881"
